@@ -1,6 +1,7 @@
 package org.example.jpaExample;
 
 import org.example.jpaExample.model.Address;
+import org.example.jpaExample.model.CCLocation;
 import org.example.jpaExample.model.StudentGroup;
 import org.example.jpaExample.model.Student;
 
@@ -12,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class JPAExample {
 
@@ -26,25 +28,30 @@ public class JPAExample {
             e.printStackTrace();
         }
 
-        StudentGroup studentGroupBp2 = new StudentGroup("Budapest 2016-2");
+        StudentGroup studentGroupBp2 = new StudentGroup("Budapest 2016-2", CCLocation.BUDAPEST);
         Address address = new Address("Hungary", "1234", "Budapest", "Macskakő út 5.");
-        Student student = new Student("Ödön", "odon@tokodon.hu", birthDate1, address);
+        Student student = new Student("Ödön", "odon@tokodon.hu", birthDate1, address, studentGroupBp2,
+                List.of("654789345", "654765876"));
         studentGroupBp2.addStudent(student);
 
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
         em.persist(address);
         em.persist(student);
+        em.persist(studentGroupBp2);
         transaction.commit();
         System.out.println("\n### Ödön saved.\n");
 
         Address address2 = new Address("Hungary", "6789", "Budapest", "Harap u. 3.");
-        Student student2 = new Student("Aladár", "ktyfl@gmail.com", birthDate2, address2);
+        Student student2 = new Student("Aladár", "ktyfl@gmail.com", birthDate2, address2, studentGroupBp2,
+                List.of("657432567", "765876098"));
         studentGroupBp2.addStudent(student2);
 
         transaction.begin();
-        em.persist(student2);
         em.persist(address2);
+        em.persist(student2);
+        em.persist(studentGroupBp2);
+//        em.remove(studentGroupBp2);
         transaction.commit();
         System.out.println("\n### Aladár saved.\n");
     }
@@ -82,7 +89,7 @@ public class JPAExample {
         System.out.println("--Found address #2");
         System.out.println("----address---- " + foundAddress2.getAddr());
 
-//        loadStudentGroup(em);
+        loadStudentGroup(em);
 
         em.close();
         emf.close();
