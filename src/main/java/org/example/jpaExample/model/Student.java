@@ -1,8 +1,10 @@
 package org.example.jpaExample.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Student {
@@ -13,15 +15,26 @@ public class Student {
 
     private String name;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
+    @Transient
     private long age;
 
     @OneToOne
     private Address address;
+
+    @ManyToOne
+    @JoinColumn(name="student_group_id")
+    private StudentGroup studentGroup;
+
+    @ElementCollection
+    @CollectionTable(name = "Phone")
+    @Column(name = "phone_number")
+    private List<String> phoneNumbers = new ArrayList<>();
 
     public Student() {
     }
@@ -34,9 +47,12 @@ public class Student {
                 / (60L * 60L * 1000L * 24L * 365L);
     }
 
-    public Student(String name, String email, Date dateOfBirth, Address address) {
+    public Student(String name, String email, Date dateOfBirth, Address address, StudentGroup studentGroup,
+                   List<String> phoneNumbers) {
         this(name, email, dateOfBirth);
         this.address = address;
+        this.studentGroup = studentGroup;
+        this.phoneNumbers = phoneNumbers;
     }
 
     public long getId() {
